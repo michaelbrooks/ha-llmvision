@@ -897,6 +897,7 @@ class Ollama(Provider):
 
         response = await self._post(url=endpoint, headers={}, data=data)
         response_text = response.get("message").get("content")
+        response_text = response_text.removesuffix("<end_")
         return response_text
 
     def _prepare_vision_data(self, call: dict) -> dict:
