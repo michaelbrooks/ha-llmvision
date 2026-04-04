@@ -1,6 +1,6 @@
 {
     "domain": "llmvision",
-    "name": "LLM Vision",
+    "name": "LLM Vision (Fork)",
     "codeowners": ["@valentinfrlch", "@TheRealFalseReality"],
     "config_flow": true,
     "dependencies": ["http"],
