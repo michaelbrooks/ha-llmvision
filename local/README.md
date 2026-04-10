@@ -1,12 +1,14 @@
 # Local fork of ha-llmvision
 
-This is a **private** fork of [valentinfrlch/ha-llmvision](https://github.com/valentinfrlch/ha-llmvision)
+This is a **public, non-fork** copy of [valentinfrlch/ha-llmvision](https://github.com/valentinfrlch/ha-llmvision)
 maintained by @michaelbrooks. It carries a small stack of local-only patches on
 top of a tracked upstream branch and is deployed to a personal Home Assistant
 instance via HACS GitHub Releases.
 
-The patches in this fork are **not intended for upstream contribution**. That is
-the whole reason the repo is private.
+The repo is public (HACS requires public repositories) but is **not** a GitHub
+fork — it has no fork badge, no "forked from" header, and does not appear in
+upstream's fork list. The patches in this fork are **not intended for upstream
+contribution**.
 
 ## Branching model
 
@@ -89,9 +91,9 @@ HACS on Home Assistant is configured with `michaelbrooks/ha-llmvision` as a
 **custom repository** (category: Integration). Because the repo has GitHub
 Releases, HACS pulls the latest Release tag — not the default branch.
 
-The HACS instance is authenticated as the GitHub account `michaelbrooks` via
-OAuth device flow (set up during initial HACS install). The OAuth grant covers
-private repos the account owns, so no separate PAT management is needed.
+Note: HACS **does not support private repositories** — this is a hard limit in
+HACS's OAuth scope (`public_repo` only). The repo must remain public for HACS
+deployment to work.
 
 ### Rolling back a bad release
 
@@ -129,7 +131,8 @@ restructuring. Key changes:
 
 - Public fork `michaelbrooks/ha-llmvision` renamed to
   `michaelbrooks/ha-llmvision-public-oldworking`, then deleted.
-- New **private** repo created at `michaelbrooks/ha-llmvision`.
+- New **non-fork** repo created at `michaelbrooks/ha-llmvision` (initially
+  private, later made public because HACS requires public repos).
 - Default branch renamed from `main` to `local`.
 - Tracked upstream branch changed from `main` to `v1.7.0-beta` (to pick up
   Ollama thinking-off-by-default and /api/generate refactor).
