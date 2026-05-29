@@ -14,7 +14,7 @@ repo_root="$(git rev-parse --show-toplevel)"
 cd "$repo_root"
 
 MANIFEST="custom_components/llmvision/manifest.json"
-UPSTREAM_REF_LABEL="upstream v1.7.0-beta"
+UPSTREAM_REF_LABEL="upstream v1.7.1-beta"
 
 # Parse owner/repo from origin remote URL so `gh` calls explicitly target
 # the fork even when multiple remotes exist (origin + upstream).
