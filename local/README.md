@@ -13,7 +13,7 @@ contribution**.
 ## Branching model
 
 ```
-upstream/v1.7.0-beta  (remote, read-only — valentinfrlch/ha-llmvision)
+upstream/v1.7.1-beta  (remote, read-only — valentinfrlch/ha-llmvision)
          │
          │  periodic: ./local/sync-upstream.sh
          ▼
@@ -52,16 +52,25 @@ the version string.
 
 ## Tracked upstream branch
 
-The fork currently tracks `upstream/v1.7.0-beta` because it carries two
-features we depend on:
+The fork tracks `upstream/v1.7.1-beta`. Upstream shipped `v1.7.0` stable on
+2026-05-26; we track the `v1.7.1-beta` branch (a few commits ahead of stable)
+because it carries fixes our stack depends on:
 
 1. Ollama provider uses `"think": false` by default, suppressing reasoning
-   output from thinking-capable models (qwen3.5, qwen3-vl, etc.).
-2. Ollama provider uses `/api/generate` instead of `/api/chat`, which avoids a
-   response-suffix bug that required a local workaround on the previous base.
+   output from thinking-capable models (qwen3.5, qwen3-vl, etc.). (Shipped in
+   v1.7.0; retained here.)
+2. Ollama `keep_alive` validation in the config flow (#648) — fixes the
+   "couldn't generate content" failure caused by malformed `keep_alive` values.
+3. Anthropic thinking-budget normalization (enforces the 1024-token API
+   minimum, disables thinking below it) and OpenAI reasoning-effort
+   normalization with newer GPT model mappings.
 
-When upstream ships v1.7.0 stable (or later), the tracked branch in
-`local/sync-upstream.sh` should be updated accordingly.
+The `/api/chat` endpoint + `message.content` parsing is the Ollama code path on
+this base (the older "/api/generate" note no longer applies).
+
+When upstream ships `v1.7.1` stable (or a later beta/stable), update the tracked
+ref in **three** places: `UPSTREAM_REF` in `local/sync-upstream.sh` and
+`local/check-status.sh`, and `UPSTREAM_REF_LABEL` in `local/release.sh`.
 
 ## Routine workflow
 
@@ -145,7 +154,7 @@ restructuring. Key changes:
 | File | Purpose |
 | --- | --- |
 | `README.md` | This file |
-| `sync-upstream.sh` | Fetch upstream and rebase `local` onto `upstream/v1.7.0-beta` |
+| `sync-upstream.sh` | Fetch upstream and rebase `local` onto `upstream/v1.7.1-beta` |
 | `bump-version.sh` | Increment the 4th component of `manifest.json`'s version and commit |
 | `release.sh` | Tag `v<version>`, push, create GitHub Release |
 | `check-status.sh` | Read-only status: upstream divergence, local patches, latest Release |
