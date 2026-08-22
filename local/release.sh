@@ -90,8 +90,12 @@ echo
 echo "==> Creating annotated tag..."
 git tag -a "$tag" -m "local release $version (based on $UPSTREAM_REF_LABEL)"
 
-echo "==> Pushing branch and tag to origin..."
-git push origin local --follow-tags
+# `local` is REBASED onto the tracked upstream ref on every sync, so its history
+# is rewritten and a plain push is rejected as non-fast-forward. Force-push with
+# a lease so we only overwrite the remote tip we last fetched (never someone
+# else's push). The tag goes in the same push via --follow-tags.
+echo "==> Pushing branch (force-with-lease) and tag to origin..."
+git push --force-with-lease origin local --follow-tags
 
 echo "==> Creating GitHub Release on $origin_repo..."
 gh release create "$tag" \
