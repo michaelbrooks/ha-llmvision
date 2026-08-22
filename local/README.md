@@ -13,7 +13,7 @@ contribution**.
 ## Branching model
 
 ```
-upstream/v1.7.1-beta  (remote, read-only — valentinfrlch/ha-llmvision)
+upstream tag v1.7.1   (remote, read-only — valentinfrlch/ha-llmvision)
          │
          │  periodic: ./local/sync-upstream.sh
          ▼
@@ -50,27 +50,31 @@ Git tags and GitHub Release titles use the `v`-prefix convention: `v1.7.0.1`.
 The literal word "local" appears in the tag message and Release title, not in
 the version string.
 
-## Tracked upstream branch
+## Tracked upstream ref
 
-The fork tracks `upstream/v1.7.1-beta`. Upstream shipped `v1.7.0` stable on
-2026-05-26; we track the `v1.7.1-beta` branch (a few commits ahead of stable)
-because it carries fixes our stack depends on:
-
-1. Ollama provider uses `"think": false` by default, suppressing reasoning
-   output from thinking-capable models (qwen3.5, qwen3-vl, etc.). (Shipped in
-   v1.7.0; retained here.)
-2. Ollama `keep_alive` validation in the config flow (#648) — fixes the
-   "couldn't generate content" failure caused by malformed `keep_alive` values.
-3. Anthropic thinking-budget normalization (enforces the 1024-token API
-   minimum, disables thinking below it) and OpenAI reasoning-effort
-   normalization with newer GPT model mappings.
+The fork tracks the upstream **stable release tag `v1.7.1`** (shipped 2026-08-04).
+Between 2026-05-30 and 2026-08-22 it tracked the `upstream/v1.7.1-beta` branch
+for fixes our stack depended on (Ollama `think: false` default, Ollama
+`keep_alive` validation #648, Anthropic thinking-budget / OpenAI reasoning-effort
+normalization); all of those landed in `v1.7.1` stable, which additionally
+relaxes the `boto3` pin (`boto3>=1.37.1`, #706) — required on HA Core 2026.8+,
+where the old `boto3==1.37.1` pin conflicts with core's constraint and the
+integration fails to set up.
 
 The `/api/chat` endpoint + `message.content` parsing is the Ollama code path on
 this base (the older "/api/generate" note no longer applies).
 
-When upstream ships `v1.7.1` stable (or a later beta/stable), update the tracked
-ref in **three** places: `UPSTREAM_REF` in `local/sync-upstream.sh` and
-`local/check-status.sh`, and `UPSTREAM_REF_LABEL` in `local/release.sh`.
+When upstream ships a later release (stable tag, or a beta branch carrying a fix
+we need), update the tracked ref in **three** places: `UPSTREAM_REF` in
+`local/sync-upstream.sh` and `local/check-status.sh`, and `UPSTREAM_REF_LABEL`
+in `local/release.sh` — then rebase with `./local/sync-upstream.sh`. A tag works
+as `UPSTREAM_REF` the same as a branch (`git rev-list`/`git rebase` accept either);
+`git fetch upstream` auto-follows tags that point into fetched branches.
+
+When rebasing across an upstream **version bump**, the stale
+`local: bump manifest version to …` commits conflict on `manifest.json`'s
+`version` line. Drop them (their `vX.Y.Z.N` tags preserve the history) and
+re-bump with `./local/bump-version.sh` after the rebase.
 
 ## Routine workflow
 
@@ -154,7 +158,7 @@ restructuring. Key changes:
 | File | Purpose |
 | --- | --- |
 | `README.md` | This file |
-| `sync-upstream.sh` | Fetch upstream and rebase `local` onto `upstream/v1.7.1-beta` |
+| `sync-upstream.sh` | Fetch upstream and rebase `local` onto the tracked ref (`v1.7.1`) |
 | `bump-version.sh` | Increment the 4th component of `manifest.json`'s version and commit |
 | `release.sh` | Tag `v<version>`, push, create GitHub Release |
 | `check-status.sh` | Read-only status: upstream divergence, local patches, latest Release |
