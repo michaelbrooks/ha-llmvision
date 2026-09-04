@@ -13,7 +13,7 @@ contribution**.
 ## Branching model
 
 ```
-upstream tag v1.7.1   (remote, read-only — valentinfrlch/ha-llmvision)
+upstream tag v1.7.2   (remote, read-only — valentinfrlch/ha-llmvision)
          │
          │  periodic: ./local/sync-upstream.sh
          ▼
@@ -52,7 +52,7 @@ the version string.
 
 ## Tracked upstream ref
 
-The fork tracks the upstream **stable release tag `v1.7.1`** (shipped 2026-08-04).
+The fork tracks the upstream **stable release tag `v1.7.2`** (shipped 2026-09-03).
 Between 2026-05-30 and 2026-08-22 it tracked the `upstream/v1.7.1-beta` branch
 for fixes our stack depended on (Ollama `think: false` default, Ollama
 `keep_alive` validation #648, Anthropic thinking-budget / OpenAI reasoning-effort
@@ -60,6 +60,15 @@ normalization); all of those landed in `v1.7.1` stable, which additionally
 relaxes the `boto3` pin (`boto3>=1.37.1`, #706) — required on HA Core 2026.8+,
 where the old `boto3==1.37.1` pin conflicts with core's constraint and the
 integration fails to set up.
+
+`v1.7.2` relaxes the two remaining exact pins the same way (`aiosqlite>=0.21.0`,
+`aiofile>=3.9.0`, #723) — required on HA Core 2026.9+, whose
+`package_constraints.txt` moved `aiofile` from `==3.9.0` to `>=3.10.1`; with the
+old `aiofile==3.9.0` pin the integration fails to set up with
+`Requirements for llmvision not found: ['aiofile==3.9.0']`. This is the second
+core-constraint conflict in two consecutive HA releases. `v1.7.2` also adds
+`tests/test_manifest.py`, which fails on any `==` pin in the manifest — the
+guard against a third.
 
 The `/api/chat` endpoint + `message.content` parsing is the Ollama code path on
 this base (the older "/api/generate" note no longer applies).
@@ -158,7 +167,7 @@ restructuring. Key changes:
 | File | Purpose |
 | --- | --- |
 | `README.md` | This file |
-| `sync-upstream.sh` | Fetch upstream and rebase `local` onto the tracked ref (`v1.7.1`) |
+| `sync-upstream.sh` | Fetch upstream and rebase `local` onto the tracked ref (`v1.7.2`) |
 | `bump-version.sh` | Increment the 4th component of `manifest.json`'s version and commit |
 | `release.sh` | Tag `v<version>`, push, create GitHub Release |
 | `check-status.sh` | Read-only status: upstream divergence, local patches, latest Release |

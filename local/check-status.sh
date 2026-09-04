@@ -4,7 +4,7 @@
 
 set -euo pipefail
 
-UPSTREAM_REF="v1.7.1"
+UPSTREAM_REF="v1.7.2"
 
 repo_root="$(git rev-parse --show-toplevel)"
 cd "$repo_root"
