@@ -84,6 +84,10 @@ When rebasing across an upstream **version bump**, the stale
 `local: bump manifest version to …` commits conflict on `manifest.json`'s
 `version` line. Drop them (their `vX.Y.Z.N` tags preserve the history) and
 re-bump with `./local/bump-version.sh` after the rebase.
+Check upstream's manifest `version` before re-bumping: upstream `v1.7.2` shipped
+with the manifest still reading `1.7.1`, so the script would have produced
+`1.7.1.1` (an existing tag). In that case set `X.Y.Z.1` for the new upstream
+version by hand and commit it as `local: bump manifest version to X.Y.Z.1`.
 
 ## Routine workflow
 
